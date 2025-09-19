@@ -2,6 +2,30 @@
 
 The `bridge` extension helps you work with multiple SDK plugins in Defold. Currently, it supports Playgama, Appodeal, Defold IAP, and Firebase. You can easily integrate and use these plugins by calling only the methods from `bridge.lua`.
 
+> This extension is just a set of wrappers over SDKs to unify their usage. You are welcome to visit the [pull request page](https://github.com/KassiaL/bridge/pulls) and add your own wrappers, making it easy for everyone to use any existing SDK in a unified way.
+
+## SDK Dependencies
+
+To connect the supported SDKs, add the following dependencies to your game.project:
+
+### Playgama
+
+- https://github.com/KassiaL/playgama_sdk/archive/main.zip
+- https://github.com/AGulev/jstodef/archive/refs/tags/3.0.0.zip
+
+### Appodeal
+
+- https://github.com/KassiaL/appodeal/archive/master.zip
+
+### Defold IAP
+
+- https://github.com/defold/extension-iap/archive/master.zip
+
+### Firebase Analytics
+
+- https://github.com/defold/extension-firebase/archive/master.zip
+- https://github.com/defold/extension-firebase-analytics/archive/master.zip
+
 ## Integration Example
 
 ```lua
