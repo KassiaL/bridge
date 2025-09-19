@@ -4,27 +4,62 @@ The `bridge` extension helps you work with multiple SDK plugins in Defold. Curre
 
 > This extension is just a set of wrappers over SDKs to unify their usage. You are welcome to visit the [pull request page](https://github.com/KassiaL/bridge/pulls) and add your own wrappers, making it easy for everyone to use any existing SDK in a unified way.
 
+## Supported SDKs
+
+- Playgama
+- Appodeal
+- Defold IAP
+- Firebase Analytics
+
+## Setup
+
+Open your `game.project` file and add the following line to the `dependencies` field under the `[project]` section:
+
+[Bridge](https://github.com/KassiaL/bridge)
+
+```
+https://github.com/KassiaL/bridge/archive/main.zip
+```
+
 ## SDK Dependencies
 
-To connect the supported SDKs, add the following dependencies to your game.project:
+To connect the supported SDKs, add the following lines to your `dependencies` field as needed:
 
-### Playgama
+[Playgama SDK](https://github.com/KassiaL/playgama_sdk)
 
-- https://github.com/KassiaL/playgama_sdk/archive/main.zip
-- https://github.com/AGulev/jstodef/archive/refs/tags/3.0.0.zip
+```
+https://github.com/KassiaL/playgama_sdk/archive/main.zip
+```
 
-### Appodeal
+[JSToDef](https://github.com/AGulev/jstodef)
 
-- https://github.com/KassiaL/appodeal/archive/master.zip
+```
+https://github.com/AGulev/jstodef/archive/refs/tags/3.0.0.zip
+```
 
-### Defold IAP
+[Appodeal](https://github.com/KassiaL/appodeal)
 
-- https://github.com/defold/extension-iap/archive/master.zip
+```
+https://github.com/KassiaL/appodeal/archive/master.zip
+```
 
-### Firebase Analytics
+[Defold IAP](https://github.com/defold/extension-iap)
 
-- https://github.com/defold/extension-firebase/archive/master.zip
-- https://github.com/defold/extension-firebase-analytics/archive/master.zip
+```
+https://github.com/defold/extension-iap/archive/master.zip
+```
+
+[Firebase](https://github.com/defold/extension-firebase)
+
+```
+https://github.com/defold/extension-firebase/archive/master.zip
+```
+
+[Firebase Analytics](https://github.com/defold/extension-firebase-analytics)
+
+```
+https://github.com/defold/extension-firebase-analytics/archive/master.zip
+```
 
 ## Integration Example
 
