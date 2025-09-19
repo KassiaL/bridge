@@ -15,15 +15,15 @@ The `bridge` extension helps you work with multiple SDK plugins in Defold. Curre
 
 Open your `game.project` file and add the following line to the `dependencies` field under the `[project]` section:
 
-[Bridge](https://github.com/KassiaL/bridge)
-
 ```
 https://github.com/KassiaL/bridge/archive/main.zip
 ```
 
 ## SDK Dependencies
 
-To connect the supported SDKs, add the following lines to your `dependencies` field as needed:
+Add the dependencies for the SDKs you want to use. Each SDK may require one or more dependencies:
+
+### Playgama
 
 [Playgama SDK](https://github.com/KassiaL/playgama_sdk)
 
@@ -37,17 +37,23 @@ https://github.com/KassiaL/playgama_sdk/archive/main.zip
 https://github.com/AGulev/jstodef/archive/refs/tags/3.0.0.zip
 ```
 
+### Appodeal
+
 [Appodeal](https://github.com/KassiaL/appodeal)
 
 ```
 https://github.com/KassiaL/appodeal/archive/master.zip
 ```
 
+### Defold IAP
+
 [Defold IAP](https://github.com/defold/extension-iap)
 
 ```
 https://github.com/defold/extension-iap/archive/master.zip
 ```
+
+### Firebase Analytics
 
 [Firebase](https://github.com/defold/extension-firebase)
 
