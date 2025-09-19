@@ -1,0 +1,12 @@
+---@class leaderboard_entry
+---@field id string?
+---@field name string
+---@field photo string?
+---@field score number
+---@field rank number
+
+---@class leaderboards
+---@field get_type fun(): "not_available" | "in_game" | "native" | "native_popup"
+---@field set_score fun(leaderboard_id: string, score: number)
+---@field get_entries fun(leaderboard_id: string, callback: fun(entries: leaderboard_entry[])) Works only when bridge.leaderboards.get_type() == "in_game"
+---@field show_native_popup fun(leaderboard_id: string) Works only when bridge.leaderboards.get_type() == "native_popup"

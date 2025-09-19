@@ -1,0 +1,6 @@
+---@class analytics
+---@field log_string fun(event: string, param: string, value: string)
+---@field log_int fun(event: string, param: string, value: number)
+---@field log fun(event: string)
+---@field log_number fun(event: string, param: string, value: number)
+---@field log_table fun(event: string, value: table)

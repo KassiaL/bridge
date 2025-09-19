@@ -1,0 +1,15 @@
+---@class payment_item
+---@field ident string
+---@field title string
+---@field description string
+---@field currency_code string
+---@field price_string string
+---@field price number
+
+---@class payments
+---@field is_supported fun(): boolean
+---@field set_callback fun(callback: fun(payment_item_id: string?))
+---@field purchase fun(id: string) use this function for non-consumable products
+---@field consume fun(id: string) use this function for consumable products
+---@field get_catalog fun(purchases_id_list: string[], callback: fun(catalog: payment_item[]))
+---@field restore fun()

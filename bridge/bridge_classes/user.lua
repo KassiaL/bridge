@@ -1,0 +1,5 @@
+---@class user
+---@field is_authorization_supported fun(): boolean
+---@field is_authorized fun(): boolean
+---@field get_player_id fun(): string
+---@field get_player_name fun(): string

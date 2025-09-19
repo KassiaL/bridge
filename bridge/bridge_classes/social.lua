@@ -1,0 +1,11 @@
+---@class social
+---@field is_share_supported fun(): boolean
+---@field share fun(options: table, success_callback: fun(result: boolean))
+---@field is_invite_friends_supported fun(): boolean
+---@field invite_friends fun(options: table, success_callback: fun(result: boolean))
+---@field is_add_to_favorites_supported fun(): boolean
+---@field add_to_favorites fun(success_callback: fun(result: boolean))
+---@field is_add_to_home_screen_supported fun(): boolean
+---@field add_to_home_screen fun(success_callback: fun(result: boolean))
+---@field is_rate_supported fun(): boolean
+---@field rate fun(success_callback: fun(result: boolean))

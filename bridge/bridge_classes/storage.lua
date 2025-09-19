@@ -1,0 +1,6 @@
+---@class storage
+---@field is_supported fun(): boolean
+---@field set fun(key: string, value: any)
+---@field get fun(key: string, callback: function)
+---@field set_multiple fun(keys_array: string[], values_array: any[])
+---@field get_multiple fun(keys_array: string[], callback: function)

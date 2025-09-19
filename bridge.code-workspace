@@ -1,0 +1,80 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"glsllint.additionalStageAssociations": {
+			".fp": "frag",
+			".vp": "vert"
+		},
+		"files.associations": {
+			"*.project": "ini",
+			"*.script": "lua",
+			"*.gui_script": "lua",
+			"*.render_script": "lua",
+			"*.editor_script": "lua",
+			"*.fp": "glsl",
+			"*.vp": "glsl",
+			"*.go": "textproto",
+			"*.animationset": "textproto",
+			"*.atlas": "textproto",
+			"*.buffer": "json",
+			"*.camera": "textproto",
+			"*.collection": "textproto",
+			"*.collectionfactory": "textproto",
+			"*.collectionproxy": "textproto",
+			"*.collisionobject": "textproto",
+			"*.display_profiles": "textproto",
+			"*.factory": "textproto",
+			"*.gamepads": "textproto",
+			"*.gui": "textproto",
+			"*.input_binding": "textproto",
+			"*.label": "textproto",
+			"*.material": "textproto",
+			"*.mesh": "textproto",
+			"*.model": "textproto",
+			"*.particlefx": "textproto",
+			"*.render": "textproto",
+			"*.sound": "textproto",
+			"*.spinemodel": "textproto",
+			"*.spinescene": "textproto",
+			"*.sprite": "textproto",
+			"*.texture_profiles": "textproto",
+			"*.tilemap": "textproto",
+			"*.tilesource": "textproto",
+			"*.manifest": "textproto",
+			"*.appmanifest": "yaml",
+			"*.script_api": "yaml",
+			"ext.manifest": "yaml"
+		}
+	},
+	"launch": {
+		"configurations": [
+			{
+				"name": "Defold Kit",
+				"type": "lua-local",
+				"request": "launch",
+				"stopOnEntry": false,
+				"verbose": false,
+				"internalConsoleOptions": "openOnSessionStart",
+				"program": {
+					"command": "build/defoldkit/dmengine"
+				},
+				"args": [
+					"build/defoldkit/game.projectc"
+				],
+				"windows": {
+					"program": {
+						"command": "build\\defoldkit\\dmengine.exe"
+					},
+					"args": [
+						"build\\defoldkit\\game.projectc"
+					]
+				},
+				"preLaunchTask": "Defold Kit: Build to Launch"
+			}
+		]
+	}
+}
