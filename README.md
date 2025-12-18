@@ -1,12 +1,13 @@
 # Bridge Extension for Defold
 
-The `bridge` extension helps you work with multiple SDK plugins in Defold. Currently, it supports Playgama, Appodeal, Defold IAP, and Firebase. You can easily integrate and use these plugins by calling only the methods from `bridge.lua`.
+The `bridge` extension helps you work with multiple SDK plugins in Defold. You can easily integrate and use these plugins by calling only the methods from `bridge.lua`.
 
 > This extension is just a set of wrappers over SDKs to unify their usage. You are welcome to visit the [pull request page](https://github.com/KassiaL/bridge/pulls) and add your own wrappers, making it easy for everyone to use any existing SDK in a unified way.
 
 ## Supported SDKs
 
 - Playgama
+- GamePush
 - Appodeal
 - Defold IAP
 - Firebase Analytics
@@ -25,21 +26,24 @@ Add the dependencies for the SDKs you want to use. Each SDK may require one or m
 
 ### Playgama
 
-[Playgama SDK](https://github.com/KassiaL/playgama_sdk)
+Required: [Playgama SDK](https://github.com/KassiaL/playgama_sdk), [JSToDef](https://github.com/AGulev/jstodef)
 
 ```
 https://github.com/KassiaL/playgama_sdk/archive/main.zip
-```
-
-[JSToDef](https://github.com/AGulev/jstodef)
-
-```
 https://github.com/AGulev/jstodef/archive/refs/tags/3.0.0.zip
+```
+
+### GamePush
+
+Required: [GamePush](https://github.com/megalanthus/defold-gamepush/archive/master.zip)
+
+```
+https://github.com/megalanthus/defold-gamepush/archive/master.zip
 ```
 
 ### Appodeal
 
-[Appodeal](https://github.com/KassiaL/appodeal)
+Required: [Appodeal](https://github.com/KassiaL/appodeal)
 
 ```
 https://github.com/KassiaL/appodeal/archive/master.zip
@@ -47,7 +51,7 @@ https://github.com/KassiaL/appodeal/archive/master.zip
 
 ### Defold IAP
 
-[Defold IAP](https://github.com/defold/extension-iap)
+Required: [Defold IAP](https://github.com/defold/extension-iap)
 
 ```
 https://github.com/defold/extension-iap/archive/master.zip
@@ -55,15 +59,10 @@ https://github.com/defold/extension-iap/archive/master.zip
 
 ### Firebase Analytics
 
-[Firebase](https://github.com/defold/extension-firebase)
+Required: [Firebase](https://github.com/defold/extension-firebase), [Firebase Analytics](https://github.com/defold/extension-firebase-analytics)
 
 ```
 https://github.com/defold/extension-firebase/archive/master.zip
-```
-
-[Firebase Analytics](https://github.com/defold/extension-firebase-analytics)
-
-```
 https://github.com/defold/extension-firebase-analytics/archive/master.zip
 ```
 
@@ -74,8 +73,10 @@ local bridge = require("bridge.bridge")
 local bridge_mock = require("bridge.mock")
 local bridge_firebase = require("bridge.firebase")
 local bridge_playgama = require("bridge.playgama")
+local bridge_gamepush = require("bridge.gamepush")
 local bridge_appodeal = require("bridge.appodeal")
 local defold_iap = require("bridge.defold_iap")
+local device = require("m.stuff.device")
 
 if html5 then
     bridge.init_sdks({ bridge_playgama, bridge_mock })
@@ -89,7 +90,7 @@ end
 
 All SDKs are connected in sequence and do NOT overwrite each other's methods. That's why `bridge_mock` is connected last, to stub any methods not implemented in previous SDKs.
 
-You can then use the universal method `run_after_sdk_init`, which calls your callback only after the SDKs are initialized:
+You can then use the universal method `run_after_sdk_init`, which calls your callback after SDK initialization is complete. If the SDKs are already initialized, the callback is called immediately:
 
 ```lua
 bridge.run_after_sdk_init(function()
@@ -103,75 +104,43 @@ bridge.run_after_sdk_init(function()
 end)
 ```
 
-## API Overview
+## Autocomplete and API reference
 
-Below are the available APIs from `bridge_classes`:
+Autocomplete in your IDE should work with the `bridge.lua` file, so you will see hints for `bridge.ads`, `bridge.payments`, `bridge.utils`, etc.
 
-### ads
+Available classes (from `bridge/bridge_classes`): `ads`, `analytics`, `leaderboards`, `payments`, `social`, `storage`, `user`, `utils`.
 
-- is_reward_ads_available(): boolean
-- is_interstitial_ads_available(): boolean
-- show_reward_ads(reward_callback, close_callback, error_callback, opened_callback)
-- show_interstitial_ads(close_callback, error_callback, opened_callback)
+If you want to view the full API and annotations (for example `---@class leaderboards`), open the files in `bridge/bridge_classes`.
 
-### analytics
+Payments note: on mobile devices only `payments.restore` may be available, while in Playgama/GamePush only `payments.get_purchases` may be available. Always check these methods for `nil` before calling them. Playgama and GamePush require calling `payments.get_purchases` at game start (after SDK initialization). On iOS (App Store) you should not call `payments.restore` at game start, only in response to a user action (for example, a "Restore purchases" button).
 
-- log_string(event, param, value)
-- log_int(event, param, value)
-- log(event)
-- log_number(event, param, value)
-- log_table(event, value)
+## Recommended workflow: enable only the SDKs you need before a platform build
 
-### leaderboards
+It is recommended to add only the SDK dependencies you need right before a platform build, and remove them after the build. Some SDKs may conflict with each other (for example, [Playgama SDK](https://github.com/KassiaL/playgama_sdk) and [GamePush](https://github.com/megalanthus/defold-gamepush/archive/master.zip)).
 
-- get_type(): "not_available" | "in_game" | "native" | "native_popup"
-- set_score(leaderboard_id, score)
-- get_entries(leaderboard_id, callback) — works only when get_type() == "in_game"
-- show_native_popup(leaderboard_id) — works only when get_type() == "native_popup"
+You can automate this with command-line tools, for example by using separate Git branches per platform, or by using scripts (Python, bash) that update `game.project` and your Lua initialization code.
 
-### payments
+Example build pipeline:
 
-- is_supported(): boolean
-- set_callback(callback)
-- purchase(id)
-- consume(id)
-- get_catalog(purchases_id_list, callback)
-- restore()
+```bash
+python3 platform_python_scripts/build_stage.py "$html5_vendor" start
 
-### social
+java -jar "$bob" clean resolve --archive --platform js-web build bundle --bundle-output="$path_to_bundle" --liveupdate "$liveupdate" --variant release --texture-compression "yes" --build-report-html "${path_to_bundle}reports/report.html"
 
-- is_share_supported(): boolean
-- share(options, success_callback)
-- is_invite_friends_supported(): boolean
-- invite_friends(options, success_callback)
-- is_add_to_favorites_supported(): boolean
-- add_to_favorites(success_callback)
-- is_add_to_home_screen_supported(): boolean
-- add_to_home_screen(success_callback)
-- is_rate_supported(): boolean
-- rate(success_callback)
+python3 platform_python_scripts/build_stage.py "$html5_vendor" finish
+```
 
-### storage
+In this approach, on `start` you typically:
 
-- is_supported(): boolean
-- set(key, value)
-- get(key, callback)
-- set_multiple(keys_array, values_array)
-- get_multiple(keys_array, callback)
+- add platform-specific dependencies into `game.project`
+- update your Bridge init code to use one of:
+  - `bridge.init_sdks({ bridge_playgama, bridge_mock })`
+  - `bridge.init_sdks({ bridge_gamepush, bridge_mock })`
+- update the corresponding requires in your Lua init script to include one of:
+  - `local bridge_playgama = require("bridge.playgama")`
+  - `local bridge_gamepush = require("bridge.gamepush")`
 
-### user
-
-- is_authorization_supported(): boolean
-- is_authorized(): boolean
-- get_player_id(): string
-- get_player_name(): string
-
-### utils
-
-- get_language(): string
-- get_server_time(callback_millis)
-- send_platform_message(message)
-- get_platform_id(): string
+On `finish` you revert those changes (remove the dependencies from `game.project` and restore the init script) to keep the project clean and avoid SDK conflicts in other builds.
 
 ## Mock Usage for Testing
 

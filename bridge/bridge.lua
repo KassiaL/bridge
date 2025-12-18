@@ -79,9 +79,14 @@ function M.is_all_sdk_inited()
 	return true
 end
 
+---Executed immediately if is_all_sdk_inited is true, otherwise executed after all sdk are inited.
 ---@param callback function
 function M.run_after_sdk_init(callback, ...)
 	local args = { ... }
+	if M.is_all_sdk_inited() then
+		callback(unpack(args))
+		return
+	end
 	local log_timer = nil
 	local log = function()
 		if M.is_all_sdk_inited() then

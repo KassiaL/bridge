@@ -129,6 +129,9 @@ local ads = {
 	end,
 	show_interstitial_ads = function(_close_callback, _error_callback, _opened_callback)
 		ad_wrapper.show_interstitial_ads(_close_callback, _error_callback, _opened_callback, show_interstitial_ads)
+	end,
+	is_reward_ads_supported = function()
+		return true
 	end
 }
 

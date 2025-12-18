@@ -12,3 +12,4 @@ builtins
 *.code_workspace
 /.cursor
 /.vscode
+.luarc.json

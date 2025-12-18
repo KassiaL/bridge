@@ -91,6 +91,7 @@ local payments = {
 		non_consumable_products_id_list[id] = nil
 		iap.buy(id)
 	end,
+	get_purchases = nil,
 }
 
 M.payments = payments

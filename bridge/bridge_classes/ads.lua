@@ -1,4 +1,5 @@
 ---@class ads
+---@field is_reward_ads_supported fun(): boolean
 ---@field is_reward_ads_available fun(): boolean
 ---@field is_interstitial_ads_available fun(): boolean
 ---@field show_reward_ads fun(reward_callback: function | nil, close_callback: function | nil, error_callback: function | nil, opened_callback: function | nil)

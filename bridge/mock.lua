@@ -1,4 +1,5 @@
 local M = {}
+local defsave = require("defsave.defsave")
 
 -- Mock state for testing
 local rewarded_ad_reward_enabled = false
@@ -9,6 +10,9 @@ function M.set_rewarded_ad_reward_enabled(is_enabled)
 end
 
 function M.init_sdk()
+	defsave.enable_obfuscation = false
+	defsave.appname = sys.get_config_string("project.title", "undef")
+	defsave.load("c")
 	is_sdk_inited = true
 end
 
@@ -102,13 +106,20 @@ local storage = {
 	set = function() end,
 
 	get = function(key, callback)
-		if callback then callback(nil) end
+		error("storage_not_supported")
 	end,
 
-	set_multiple = function() end,
+	set_local = function(key, value)
+		defsave.set("c", key, value)
+		defsave.save("c")
+	end,
 
-	get_multiple = function(keys_array, callback)
-		if callback then callback(nil) end
+	get_local = function(key, callback)
+		if not defsave.key_exists("c", key) then
+			callback(nil)
+			return
+		end
+		callback(defsave.get("c", key))
 	end,
 }
 
@@ -140,10 +151,7 @@ M.user = user
 ---@type ads
 local ads = {
 	is_reward_ads_available = function()
-		if rewarded_ad_reward_enabled then
-			return true
-		end
-		return false
+		return rewarded_ad_reward_enabled
 	end,
 
 	is_interstitial_ads_available = function()
@@ -163,6 +171,10 @@ local ads = {
 	show_interstitial_ads = function(_close_callback, _error_callback, _opened_callback)
 		if _error_callback then _error_callback() end
 	end,
+
+	is_reward_ads_supported = function()
+		return rewarded_ad_reward_enabled
+	end
 }
 
 M.ads = ads
@@ -186,6 +198,13 @@ local utils = {
 		return sys.get_sys_info().system_name
 	end,
 
+	set_platform_pause_callback = function()
+
+	end,
+
+	set_platform_resume_callback = function()
+
+	end
 }
 
 M.utils = utils
@@ -211,6 +230,7 @@ local payments = {
 	set_callback = function() end,
 	restore = function() end,
 	consume = function() end,
+	get_purchases = function() end,
 }
 M.payments = payments
 ---@type fun(payment_item_id: string?) | nil

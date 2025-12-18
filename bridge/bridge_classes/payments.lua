@@ -12,4 +12,5 @@
 ---@field purchase fun(id: string) use this function for non-consumable products
 ---@field consume fun(id: string) use this function for consumable products
 ---@field get_catalog fun(purchases_id_list: string[], callback: fun(catalog: payment_item[]))
----@field restore fun()
+---@field restore fun() | nil
+---@field get_purchases fun(callback: fun(purchases_ids: string[])) | nil
