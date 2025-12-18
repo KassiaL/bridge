@@ -6,11 +6,15 @@ The `bridge` extension helps you work with multiple SDK plugins in Defold. You c
 
 ## Supported SDKs
 
-- Playgama
-- GamePush
-- Appodeal
-- Defold IAP
-- Firebase Analytics
+- Web platforms (HTML5)
+  - Playgama
+  - GamePush
+- Ads (mobile)
+  - Appodeal
+- Analytics (mobile)
+  - Firebase Analytics
+- In-app purchases (mobile)
+  - Defold IAP
 
 ## Setup
 
