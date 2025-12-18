@@ -22,7 +22,10 @@ Open your `game.project` file and add the following line to the `dependencies` f
 
 ```
 https://github.com/KassiaL/bridge/archive/main.zip
+https://github.com/subsoap/defsave/archive/master.zip
 ```
+
+DefSave is required for local storage (`bridge.storage.set_local/get_local`).
 
 ## SDK Dependencies
 
@@ -117,6 +120,28 @@ Available classes (from `bridge/bridge_classes`): `ads`, `analytics`, `leaderboa
 If you want to view the full API and annotations (for example `---@class leaderboards`), open the files in `bridge/bridge_classes`.
 
 Payments note: on mobile devices only `payments.restore` may be available, while in Playgama/GamePush only `payments.get_purchases` may be available. Always check these methods for `nil` before calling them. Playgama and GamePush require calling `payments.get_purchases` at game start (after SDK initialization). On iOS (App Store) you should not call `payments.restore` at game start, only in response to a user action (for example, a "Restore purchases" button).
+
+## Ads tuning
+
+You can control when interstitial ads are allowed. By default, `INITIAL_DELAY = 100` and `INTERSTITIAL_COOLDOWN = 150`, so for the first 100 seconds `bridge.ads.is_interstitial_ads_available()` will always return `false`.
+
+To adjust these values and to delay interstitial ads manually, use `require("bridge.ads_utils.ad_timer")`:
+
+```lua
+local ad_timer = require("bridge.ads_utils.ad_timer")
+ad_timer.INITIAL_DELAY = 0
+ad_timer.INTERSTITIAL_COOLDOWN = 60
+ad_timer.delay_interstitial(30)
+```
+
+Rewarded ads also affect interstitial cooldown: it is reset to `INTERSTITIALL_COOLDOWN_DUE_REWARDED_AD` (default is equal to `INTERSTITIAL_COOLDOWN`).
+
+You can also control whether sound is muted during ads (by changing the master group gain). By default it is enabled. To disable it:
+
+```lua
+local ad_sound_mute = require("bridge.ads_utils.ad_sound_mute")
+ad_sound_mute.MUTE_SOUND_ON_ADS = false
+```
 
 ## Recommended workflow: enable only the SDKs you need before a platform build
 
