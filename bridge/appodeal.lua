@@ -4,11 +4,13 @@ local appodeal = appodeal
 
 local is_inited = false
 local is_test_ads = false
+local banner_state = "hidden"
 
 local reward_callback = nil
 local error_callback = nil
 local close_callback = nil
 local opened_callback = nil
+
 
 function M.set_test_ads(test_ads)
 	is_test_ads = test_ads
@@ -23,6 +25,11 @@ local function user_consent_update(use_personal_ads)
 	end
 end
 
+function M.set_use_safe_area(use_or_no)
+	assert(appodeal, "Appodeal is not initialized")
+	appodeal.set_use_safe_area(use_or_no)
+end
+
 local function set_up_callbacks(_reward_callback, _close_callback, _error_callback, _opened_callback)
 	reward_callback = _reward_callback
 	close_callback = _close_callback
@@ -32,7 +39,7 @@ end
 
 local function listener(self, message_id, message)
 	if message_id == appodeal.MSG_ADS_INITED then
-		is_inited = true
+
 	elseif message_id == appodeal.MSG_REWARDED then
 		if message.event == appodeal.EVENT_LOADED then
 
@@ -55,6 +62,16 @@ local function listener(self, message_id, message)
 			if close_callback then close_callback() end
 		elseif message.event == appodeal.EVENT_ERROR_SHOW then
 			if error_callback then error_callback() end
+		end
+	elseif message_id == appodeal.MSG_BANNER then
+		if message.event == appodeal.EVENT_LOADED then
+			print("APPODEAL BANNER: banner loaded and auto-shown")
+		elseif message.event == appodeal.EVENT_SHOWN then
+			print("APPODEAL BANNER: banner shown successfully")
+		elseif message.event == appodeal.EVENT_ERROR_SHOW then
+			print("APPODEAL BANNER: banner failed to show")
+		elseif message.event == appodeal.EVENT_NOT_LOADED then
+			print("APPODEAL BANNER: banner failed to load")
 		end
 	end
 end
@@ -104,11 +121,13 @@ function M.init_sdk()
 	if not application_key then
 		error("appodeal.appodeal_id not found in config")
 	end
+	assert(appodeal, "Appodeal is not initialized")
 
 	if appodeal then
 		-- appodeal.set_user_consent(false)     -- GDPR нужно сюда поместить данные согласия пользователя
 		appodeal.set_callback(listener)
 		appodeal.initialize(application_key, is_test_ads)
+		is_inited = true
 	end
 end
 
@@ -132,6 +151,24 @@ local ads = {
 	end,
 	is_reward_ads_supported = function()
 		return true
+	end,
+	is_banner_supported = function()
+		-- return true
+		return false
+	end,
+	show_banner = function(position)
+		local position_str = "bottom"
+		local placement_str = "default"
+		banner_state = "shown"
+		-- print("APPODEAL BANNER: calling native show_banner with position: " .. position_str)
+		-- appodeal.show_banner(position_str, placement_str)
+	end,
+	hide_banner = function()
+		banner_state = "hidden"
+		-- appodeal.hide_banner()
+	end,
+	get_banner_state = function()
+		return banner_state
 	end
 }
 

@@ -1,6 +1,13 @@
+---@alias banner_state "shown" | "hidden"
+---@alias banner_position "top" | "bottom" | "left" | "right"
+
 ---@class ads
 ---@field is_reward_ads_supported fun(): boolean
 ---@field is_reward_ads_available fun(): boolean
 ---@field is_interstitial_ads_available fun(): boolean
 ---@field show_reward_ads fun(reward_callback: function | nil, close_callback: function | nil, error_callback: function | nil, opened_callback: function | nil)
 ---@field show_interstitial_ads fun(close_callback: function | nil, error_callback: function | nil, opened_callback: function | nil)
+---@field is_banner_supported fun(): boolean
+---@field show_banner fun(position: banner_position | nil)
+---@field hide_banner fun()
+---@field get_banner_state fun(): banner_state

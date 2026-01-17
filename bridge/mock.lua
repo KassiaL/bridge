@@ -10,6 +10,9 @@ function M.set_rewarded_ad_reward_enabled(is_enabled)
 end
 
 function M.init_sdk()
+	if is_sdk_inited then
+		return
+	end
 	defsave.enable_obfuscation = false
 	defsave.appname = sys.get_config_string("project.title", "undef")
 	defsave.load("c")
@@ -174,6 +177,22 @@ local ads = {
 
 	is_reward_ads_supported = function()
 		return rewarded_ad_reward_enabled
+	end,
+
+	is_banner_supported = function()
+		return false
+	end,
+
+	show_banner = function(position)
+		-- Not supported
+	end,
+
+	hide_banner = function()
+		-- Not supported
+	end,
+
+	get_banner_state = function()
+		return "hidden"
 	end
 }
 
@@ -208,6 +227,18 @@ local utils = {
 }
 
 M.utils = utils
+
+---@type remote_config
+local remote_config = {
+	get = function(callback)
+		if callback then callback(nil) end
+	end,
+	is_supported = function()
+		return false
+	end
+}
+
+M.remote_config = remote_config
 
 ---@type analytics
 local analytics = {

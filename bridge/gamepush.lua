@@ -98,6 +98,22 @@ end
 
 local ad_wrapper = require("bridge.ads_utils.ad_wrapper")
 
+local need_show_banner = false
+local function try_show_banner(position)
+	if not need_show_banner then return end
+	local is_banner_playing = gamepush.ads.is_sticky_playing()
+	if is_banner_playing then return end
+	local is_banner_available = gamepush.ads.is_sticky_available()
+	if not is_banner_available then
+		timer.delay(0, false, function()
+			try_show_banner(position)
+		end)
+		return
+	end
+	gamepush.ads.show_sticky(function() end)
+end
+
+local banner_state = "hidden"
 ---@type ads
 local ads = {
 	is_reward_ads_supported = function()
@@ -112,6 +128,23 @@ local ads = {
 	end,
 	show_interstitial_ads = function(_close_callback, _error_callback, _opened_callback)
 		ad_wrapper.show_interstitial_ads(_close_callback, _error_callback, _opened_callback, show_interstitial_ads)
+	end,
+	is_banner_supported = function()
+		return true
+	end,
+	show_banner = function(position)
+		need_show_banner = true
+		banner_state = "shown"
+		try_show_banner(position)
+	end,
+	hide_banner = function()
+		need_show_banner = false
+		banner_state = "hidden"
+		if not gamepush.ads.is_sticky_playing() then return end
+		gamepush.ads.close_sticky(function() end)
+	end,
+	get_banner_state = function()
+		return banner_state
 	end
 }
 
@@ -223,7 +256,9 @@ local utils = {
 		end
 	end,
 	get_platform_id = function()
-		return gamepush.platform.type()
+		local platform_type = gamepush.platform.type()
+		platform_type = string.lower(platform_type)
+		return platform_type
 	end,
 	set_platform_pause_callback = function(f)
 		M.pause_callback = f
@@ -388,7 +423,7 @@ end
 
 local function storage_set(key, value)
 	if type(value) == "table" then
-		error("storage set does not support tables. use json.encode()")
+		value = "s" .. json.encode(value)
 	end
 	gamepush.player.set(key, value)
 	gamepush.player.sync({ key }, function() end)
@@ -397,6 +432,17 @@ end
 local function storage_get(key, callback)
 	gamepush.player.load(function()
 		local v = gamepush.player.get(key)
+		if type(v) == "string" then
+			local first_char = string.sub(v, 1, 1)
+			if first_char == "s" and string.len(v) > 2 then
+				local second_char = string.sub(v, 2, 2)
+				local last_char = string.sub(v, -1)
+				if (second_char == "{" and last_char == "}") or (second_char == "[" and last_char == "]") then
+					---@diagnostic disable-next-line: cast-local-type
+					v = json.decode(string.sub(v, 2))
+				end
+			end
+		end
 		if callback then callback(v) end
 	end)
 end
@@ -411,5 +457,17 @@ local storage = {
 }
 
 M.storage = storage
+
+---@type remote_config
+local remote_config = {
+	get = function(callback)
+		if callback then callback(nil) end
+	end,
+	is_supported = function()
+		return false
+	end
+}
+
+M.remote_config = remote_config
 
 return M

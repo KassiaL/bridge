@@ -21,6 +21,9 @@ M.ads = nil
 ---@type utils
 M.utils = nil
 
+---@type remote_config
+M.remote_config = nil
+
 ---@type payments
 M.payments = nil
 
@@ -77,6 +80,15 @@ function M.is_all_sdk_inited()
 		end
 	end
 	return true
+end
+
+function M.contain_sdk(sdk_module)
+	for _, sdk in ipairs(sdks) do
+		if sdk == sdk_module then
+			return true
+		end
+	end
+	return false
 end
 
 ---Executed immediately if is_all_sdk_inited is true, otherwise executed after all sdk are inited.
