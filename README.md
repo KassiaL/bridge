@@ -7,14 +7,15 @@ The `bridge` extension helps you work with multiple SDK plugins in Defold. You c
 ## Supported SDKs
 
 - Web platforms (HTML5)
-  - Playgama
-  - GamePush
+    - Playgama
+    - GamePush
 - Ads (mobile)
-  - Appodeal
+    - Appodeal
+    - AppLovin MAX
 - Analytics (mobile)
-  - Firebase Analytics
+    - Firebase Analytics
 - In-app purchases (mobile)
-  - Defold IAP
+    - Defold IAP
 
 ## Setup
 
@@ -54,6 +55,14 @@ Required: [Appodeal](https://github.com/KassiaL/appodeal)
 
 ```
 https://github.com/KassiaL/appodeal/archive/master.zip
+```
+
+### AppLovin MAX
+
+Required: [AppLovin MAX](https://github.com/KassiaL/AppLovin-MAX-Defold)
+
+```
+https://github.com/KassiaL/AppLovin-MAX-Defold/archive/master.zip
 ```
 
 ### Defold IAP
@@ -163,11 +172,11 @@ In this approach, on `start` you typically:
 
 - add platform-specific dependencies into `game.project`
 - update your Bridge init code to use one of:
-  - `bridge.init_sdks({ bridge_playgama, bridge_mock })`
-  - `bridge.init_sdks({ bridge_gamepush, bridge_mock })`
+    - `bridge.init_sdks({ bridge_playgama, bridge_mock })`
+    - `bridge.init_sdks({ bridge_gamepush, bridge_mock })`
 - update the corresponding requires in your Lua init script to include one of:
-  - `local bridge_playgama = require("bridge.playgama")`
-  - `local bridge_gamepush = require("bridge.gamepush")`
+    - `local bridge_playgama = require("bridge.playgama")`
+    - `local bridge_gamepush = require("bridge.gamepush")`
 
 On `finish` you revert those changes (remove the dependencies from `game.project` and restore the init script) to keep the project clean and avoid SDK conflicts in other builds.
 

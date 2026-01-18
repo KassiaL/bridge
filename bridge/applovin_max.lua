@@ -18,8 +18,10 @@ local opened_callback = nil
 local rewarded_loaded = false
 local interstitial_loaded = false
 local banner_state = "hidden"
+local banner_loaded = false
 local banner_created = false
 local banner_position = nil
+local banner_showed = false
 local banner_should_show = false
 
 local RETRY_DELAY_SECONDS = 5
@@ -143,23 +145,22 @@ local function listener(self, name, params)
 			load_interstitial()
 		end
 	elseif name == "OnBannerAdLoadedEvent" then
-		if is_ad_unit_match(params, banner_ad_unit_id) and banner_should_show then
-			banner_state = "shown"
+		banner_loaded = true
+		if is_ad_unit_match(params, banner_ad_unit_id) and banner_loaded and banner_should_show and not banner_showed then
+			applovin.show_banner(banner_ad_unit_id)
+			banner_showed = true
 		end
 	elseif name == "OnBannerAdLoadFailedEvent" then
+		banner_loaded = false
 		if is_ad_unit_match(params, banner_ad_unit_id) and banner_should_show then
 			schedule_retry(function()
 				M.ads.show_banner(banner_position)
 			end)
 		end
 	elseif name == "OnBannerAdExpandedEvent" then
-		if is_ad_unit_match(params, banner_ad_unit_id) and banner_should_show then
-			banner_state = "shown"
-		end
+
 	elseif name == "OnBannerAdCollapsedEvent" then
-		if is_ad_unit_match(params, banner_ad_unit_id) and banner_should_show then
-			banner_state = "shown"
-		end
+
 	end
 end
 
@@ -245,11 +246,11 @@ local ads = {
 		return applovin ~= nil and banner_ad_unit_id ~= nil and banner_ad_unit_id ~= ""
 	end,
 	show_banner = function(position)
-		if not applovin then
-			return
-		end
 		local ad_unit_id = banner_ad_unit_id
 		if not ad_unit_id or ad_unit_id == "" then
+			return
+		end
+		if banner_state == "shown" then
 			return
 		end
 		local position_str = "bottom_center"
@@ -268,13 +269,20 @@ local ads = {
 			applovin.create_banner(ad_unit_id, position_str)
 		end
 		banner_state = "shown"
-		applovin.show_banner(ad_unit_id)
+		if banner_loaded then
+			applovin.show_banner(ad_unit_id)
+			banner_showed = true
+		end
 	end,
 	hide_banner = function()
+		if banner_state == "hidden" then
+			return
+		end
 		banner_should_show = false
 		banner_state = "hidden"
-		if applovin and banner_ad_unit_id then
+		if banner_ad_unit_id then
 			applovin.hide_banner(banner_ad_unit_id)
+			banner_showed = false
 		end
 	end,
 	get_banner_state = function()
